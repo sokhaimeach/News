@@ -8,13 +8,14 @@ function renderAll($category, $baseHref) {
     $newsByCategory = getNewsByCategory($category);
 
     if (empty($newsByCategory)) {
-        echo "<p class='text-3xl koulen-regular text-center text-gray-500 w-full h-[500px] flex items-center justify-center'>មិនមានព័ត៌មានទេសម្រាប់ប្រភេទនេះទេ</p>";
+        echo "<p class='text-3xl koulen-regular text-center text-gray-900 w-full h-[500px] flex items-center justify-center'>មិនមានព័ត៌មានទេសម្រាប់ប្រភេទនេះទេ</p>";
         return;
     }
 ?>
-    <div class="w-full mx-auto max-w-[1024px]">
+    <br>
+    <div class="w-full mx-auto container">
 
-        <div class="grid w-full lg:w-[1024px] mx-auto gap-4 bg-slate-50 p-4 grid-cols-2 lg:grid-cols-4">
+        <div class="grid w-full mx-auto gap-4 bg-gray-50 p-4 grid-cols-2 lg:grid-cols-4">
             <?php
             foreach($newsByCategory as $index => $newsItem) {
 

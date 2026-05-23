@@ -41,9 +41,10 @@ $baseHref = $base === '' ? '' : $base;
         }
     </style>
 </head>
-<body class="bg-slate-50">
+<body class="bg-gray-50 text-gray-900">
     <?php
     require "src/components/navbar.php";
+    require "src/pages/home.php";
     require "src/pages/all.php";
     require "src/pages/detail.php";
     require "Router.php";
@@ -56,8 +57,7 @@ $baseHref = $base === '' ? '' : $base;
     renderNavbar($_SERVER['REQUEST_URI']);
 
     $router->add('/', function() use ($baseHref) {
-        // renderHome($baseHref);
-        require "src/pages/home.php";
+        renderHome();
     });
 
     $router->add('/all/{category}', function($category) use ($baseHref) {

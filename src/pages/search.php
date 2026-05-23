@@ -16,7 +16,7 @@ function renderSearchPage() {
         action="search"
         method="GET"
         value="<?= htmlspecialchars($search) ?>"
-        class="flex items-center bg-white shadow-sm rounded-full overflow-hidden border border-gray-200 w-full max-w-xl">
+        class="flex items-center bg-white shadow-sm rounded-full overflow-hidden border border-gray-200 w-full max-w-5xl">
         
             <!-- Search Input -->
             <input 
@@ -24,11 +24,11 @@ function renderSearchPage() {
             name="search"
             value="<?= $search ?>"
             placeholder="ស្វែងរកព័ត៌មាន..." 
-            class="w-full px-5 pb-3 pt-4 text-gray-700 outline-none focus:outline-none focus:ring-0 border-none">
+            class="w-full px-5 pb-3 pt-4 text-gray-900 outline-none focus:outline-none focus:ring-0 border-none bg-transparent">
         
             <!-- Search Button -->
             <button type="submit"
-                class="bg-sky-800 hover:bg-sky-900 transition-colors duration-300 text-white px-6 h-full pb-3 pt-4 koulen-regular">
+                class="bg-red-700 hover:bg-red-800 transition-colors duration-300 text-white px-6 h-full pb-3 pt-4 koulen-regular">
                 ស្វែងរក
             </button>
         
@@ -36,10 +36,10 @@ function renderSearchPage() {
     </div>
 
     <!-- search result -->
-    <div class="w-full mx-auto max-w-[1024px]">
+    <div class="w-full mx-auto container">
         
         <?php if(!empty($newsItems)){ ?>
-        <div class="grid w-full lg:w-[1024px] mx-auto gap-4 bg-slate-50 p-4 grid-cols-2 lg:grid-cols-4">
+        <div class="grid w-full mx-auto gap-4 bg-gray-50 p-4 grid-cols-2 lg:grid-cols-4">
             <?php
             foreach($newsItems as $index => $item) {
 
@@ -51,7 +51,7 @@ function renderSearchPage() {
         </div>
         <?php 
         } else {
-            echo "<p class='h-[250px] text-3xl koulen-regular text-center'>រកមិនឃើញ <span class='text-rose-500'>$search</span> ទេ</p>";
+            echo "<p class='h-[250px] text-3xl koulen-regular text-center text-gray-900'>រកមិនឃើញ <span class='text-amber-500'>$search</span> ទេ</p>";
         }
         ?>
 

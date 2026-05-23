@@ -11,17 +11,17 @@ function isActive($currentCategory, $url) {
     $category = end($segments);
 
     return $category === $currentCategory
-        ? "text-amber-500"
+        ? "text-amber-300"
         : "text-white";
 }
 
 function renderNavbar($url){
-    global $categories;
+    global $categories, $icons;
 ?>
 
 <nav
 id="navbar" 
-class="w-full h-[70px] bg-sky-900 flex items-center justify-between px-5 fixed top-0 left-0 z-50 transition-transform duration-300">
+class="w-full h-[70px] bg-red-700 flex items-center justify-between px-5 fixed top-0 left-0 z-50 transition-transform duration-300">
     <!-- menu button for mobile -->
     <div class="sm:hidden">
         <!-- From Uiverse.io by Shubh0408 -->
@@ -44,17 +44,17 @@ class="w-full h-[70px] bg-sky-900 flex items-center justify-between px-5 fixed t
             <div class="relative w-[50px] h-[50px]">
                 <div class="absolute inset-0 rounded-2xl">
                     <div class="absolute -inset-1 rounded-2xl 
-                            bg-white/50
-                            blur-lg opacity-80 animate-spin">
+                            bg-white
+                            blur-lg opacity-80 animate-pulse">
                     </div>
                 </div>
 
                 <div
-                    class="relative bg-sky-900 rounded-2xl w-full h-full flex items-center justify-center border-3 border-gradient-to-r from-blue-500 to-purple-500 border-white/70 rounded-lg">
-                    <img src="./assets/koh-web-logo.svg" alt="Logo" class="w-[32px] h-[32px]">
+                    class="relative bg-red-700 rounded-2xl w-full h-full flex items-center justify-center border-3 border-gray-200 rounded-lg">
+                    <img src="./assets/logo.png" alt="Logo" class="w-[32px] h-[32px] hover:animate-spin">
                 </div>
             </div>
-            <h1 class="text-2xl koulen-regular hidden md:block">កោះសន្តិភាព</h1>
+            <h1 class="text-2xl koulen-regular hidden md:block text-white">រំដួលថ្ងៃនេះ</h1>
         </a>
     </div>
 
@@ -64,7 +64,7 @@ class="w-full h-[70px] bg-sky-900 flex items-center justify-between px-5 fixed t
             <li class="ml-6">
                 <a 
                 href=""
-                class="hover:<?= isActive("News", $url) ?>/80 <?= isActive("News", $url) ?>">
+                class="hover:text-amber-300 <?= isActive("News", $url) ?>">
                     ទំព័រដើម
                 </a>
             </li>
@@ -72,7 +72,7 @@ class="w-full h-[70px] bg-sky-900 flex items-center justify-between px-5 fixed t
                 <li class="ml-6">
                     <a 
                     href="all/<?= $category ?>"
-                    class="hover:<?= isActive($category, $url) ?>/80 <?= isActive($category, $url) ?>">
+                    class="hover:text-amber-300 <?= isActive($category, $url) ?>">
                         <?= $label ?>
                     </a>
                 </li>
@@ -80,8 +80,8 @@ class="w-full h-[70px] bg-sky-900 flex items-center justify-between px-5 fixed t
         </ul>
 
         <!-- search icon -->
-        <a href="search?search=">
-            <i class="bi bi-search text-white text-2xl md:ms-6 cursor-pointer hover:text-amber-500/80"></i>
+        <a href="search?search=" class="text-white hover:text-amber-300 transition-colors duration-300">
+            <i class="bi bi-search text-2xl md:ms-6 cursor-pointer"></i>
         </a>
 
     </div>
@@ -90,7 +90,7 @@ class="w-full h-[70px] bg-sky-900 flex items-center justify-between px-5 fixed t
 
 <!-- Off canvas menu for mobile, show/hide based on off-canvas menu state -->
 <div id="drawer-navigation"
-    class="fixed top-[70px] bottom-0 left-0 z-40 w-full p-4 overflow-y-auto transition-transform -translate-x-full duration-800 bg-black text-white koulen-regular"
+    class="fixed top-[70px] bottom-0 left-0 z-40 w-full p-4 overflow-y-auto transition-transform -translate-x-full duration-800 bg-[#1b1b1b] text-gray-900 koulen-regular border-r border-gray-200"
     tabindex="-1" aria-labelledby="drawer-navigation-label">
 
     <div class="pt-2 overflow-y-auto mt-[70px]">
@@ -99,23 +99,23 @@ class="w-full h-[70px] bg-sky-900 flex items-center justify-between px-5 fixed t
             <!-- news list -->
             <li>
                 <a href=""
-                    class="flex items-center px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group">
+                    class="flex items-center px-2 py-1.5 rounded-lg hover:bg-gray-100/20 group">
                     <div
-                        class="w-8 h-8 transition duration-75 group-hover:text-fg-brand bg-sky-900 rounded-xl justify-center items-center flex">
-                        <i class="bi bi-newspaper"></i>
+                        class="w-8 h-8 transition duration-75 bg-red-700 rounded-xl justify-center items-center flex text-white">
+                        <i class="bi bi-house"></i>
                     </div>
-                    <span class="ms-3  <?= isActive("News", $url) ?>">ទំព័រដើម</span>
+                    <span class="ms-3 <?= isActive("News", $url) ?>">ទំព័រដើម</span>
                 </a>
             </li>
             <?php foreach($categories as $category => $label): ?>
             <li>
                 <a href="all/<?= $category ?>"
-                    class="flex items-center px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group">
+                    class="flex items-center px-2 py-1.5 rounded-lg hover:bg-gray-100/20 group">
                     <div
-                        class="w-8 h-8 transition duration-75 group-hover:text-fg-brand bg-sky-900 rounded-xl justify-center items-center flex">
-                        <i class="bi bi-newspaper"></i>
+                        class="w-8 h-8 transition duration-75 bg-red-700 rounded-xl justify-center items-center flex text-white">
+                        <i class="<?= $icons[$category] ?>"></i>
                     </div>
-                    <span class="ms-3  <?= isActive($category, $url) ?>"><?= $label ?></span>
+                    <span class="ms-3 <?= isActive($category, $url) ?>"><?= $label ?></span>
                 </a>
             </li>
             <?php endforeach ?>

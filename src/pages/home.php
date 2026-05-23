@@ -2,7 +2,7 @@
 require_once "src/data/db.php";
 require_once "src/components/card.php";
 
-global $categories, $news;
+global $categories, $news, $icons;
 
 function mapArray($array, $category) {
     $result = [];
@@ -25,30 +25,39 @@ function findEnCategoryName($khName) {
     }
 }
 
-$newsByCategory = [];
+function renderHome() {
+    global $categories, $news, $icons;
 
-echo "<br>";
+    $newsByCategory = [];
 
-foreach ($categories as $category => $label) {
-    $newsByCategory[$label] = mapArray($news, $label);
-}
+    foreach ($categories as $category => $label) {
+        $filteredNews = mapArray($news, $label);
 
-foreach ($newsByCategory as $category => $newsItems) {
+        // limit to 6 items only
+        $newsByCategory[$label] = array_slice($filteredNews, 0, 6);
+    }
+?>
+
+<br>
+<?php foreach ($newsByCategory as $category => $newsItems) {
     $newsItems = orderByDate($newsItems);
 ?>
-    <div class="w-full mx-auto max-w-[1024px] mt-8">
-        <div class="w-full flex items-center justify-between px-4 md:px-0">
-            <div class="flex items-center gap-2">
-                <div class="w-10 h-10 transition duration-75 group-hover:text-fg-brand bg-sky-900 rounded-xl justify-center items-center flex">
-                    <i class="bi bi-house-door text-white"></i>
+    <div class="w-full mx-auto container mt-8 px-4 md:px-0">
+
+        <div class="w-full flex items-center justify-between rounded-xl border border-gray-200 bg-white/90 px-4 py-3 shadow-sm">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 transition duration-75 bg-red-700 rounded-xl justify-center items-center flex">
+                    <i class="<?= $icons[findEnCategoryName($category)] ?> text-white"></i>
                 </div>
 
-                <h1 class="koulen-regular text-xl font-bold text-center"><?= $category ?></h1>
+                <div>
+                    <h1 class="koulen-regular text-xl font-bold text-center text-gray-900"><?= $category ?></h1>
+                </div>
             </div>
 
             <a 
             href="all/<?= findEnCategoryName($category) ?>"
-            class="h-10 w-fit p-2 border-2 border-black/50 koulen-regular rounded-xl cursor-pointer">
+            class="h-10 w-fit px-3 flex items-center border border-gray-200 bg-gray-50 text-gray-900 hover:text-amber-500 koulen-regular rounded-xl cursor-pointer transition-colors duration-300">
                 ទាំងអស់
             </a>
         </div>
@@ -58,7 +67,7 @@ foreach ($newsByCategory as $category => $newsItems) {
             foreach($newsItems as $index => $newsItem) {
 
                 if ($index < 2) echo "<div class='col-span-2'>";
-                renderCard($newsItem);
+                    renderCard($newsItem);
                 if ($index < 2) echo "</div>";
             }
             ?>
@@ -66,5 +75,6 @@ foreach ($newsByCategory as $category => $newsItems) {
 
     </div>
 <?php
+}
 }
 ?>
