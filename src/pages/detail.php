@@ -2,6 +2,7 @@
 require_once "src/data/db.php";
 
 function renderDetail($id) {
+    global $categories;
     $newsItem = getNewsById(intval($id));
 
     if (!$newsItem) {
@@ -9,212 +10,267 @@ function renderDetail($id) {
         return;
     }
 
+    $catKey = array_search($newsItem['category'], $categories);
+
     $images = $newsItem['image'];
     $paragraphs = explode("\n", trim($newsItem['content']));
     $imageIndex = 0;
-    // similar news
     $newsByCategory = getNewsByCategory($newsItem['category']);
 ?>
 
-<br class="max-sm:hidden">
-<section class="text-gray-900 w-full mx-auto siemreap-regular bg-gray-50 overflow-hidden sm:container md:px-5">
-        <div class="sm:grid grid-cols-1 lg:grid-cols-3 sm:gap-6 bg-[#1b1b1b] sm:border sm:border-gray-200 sm:p-4 md:p-6 sm:rounded-lg">
+<div class="w-full bg-white">
+    <div class="w-full max-w-[1024px] mx-auto mt-4 md:mt-6 px-4 md:px-0">
+        <!-- breadcrumb -->
+        <nav class="flex items-center gap-2 text-sm text-gray-500 mb-4 siemreap-regular">
+            <a href="" class="hover:text-red-700 transition-colors">ទំព័រដើម</a>
+            <i class="bi bi-chevron-right text-[10px]"></i>
+            <a href="all/<?= $catKey ?: $newsItem['category'] ?>" class="hover:text-red-700 transition-colors"><?= htmlspecialchars($newsItem['category'], ENT_QUOTES) ?></a>
+            <i class="bi bi-chevron-right text-[10px]"></i>
+            <span class="text-gray-700 truncate max-w-[200px]"><?= htmlspecialchars($newsItem['title'], ENT_QUOTES) ?></span>
+        </nav>
+    </div>
 
-            <!-- Left News -->
-            <div class="lg:col-span-1 flex flex-col justify-between max-sm:fixed max-sm:inset-0">
-                <!-- slider -->
-                <div class="relative w-full h-[500px] md:h-[600px] max-sm:fixed max-sm:inset-0 max-sm:w-full max-sm:h-screen overflow-hidden">
-                    <div id="slidelist" class="flex h-full transition-transform duration-700 ease-in-out">
-                        <?php foreach($images as $image): ?>
-                            <div class="w-full h-full shrink-0 basis-full md:rounded-sm overflow-hidden">
-                                <img class="w-full h-full object-cover" src="<?= htmlspecialchars($image, ENT_QUOTES) ?>">
-                            </div>
-                        <?php endforeach; ?>
-                     </div>
-
-                    <!-- dots -->
-                    <ul class="absolute max-sm:top-[80px] sm:bottom-5 left-0 w-full flex justify-center gap-3 z-20">
-                        <?php foreach($images as $image): ?>
-                            <li class="dot w-4 h-4 rounded-full bg-gray-200 opacity-50 cursor-pointer"></li>
-                        <?php endforeach; ?>
-                    </ul>
+    <!-- Article header image & slider -->
+    <div class="relative w-full max-w-[1024px] mx-auto px-4 md:px-0">
+        <div class="relative rounded-2xl overflow-hidden shadow-lg bg-gray-100">
+            <!-- slider -->
+            <div class="relative w-full aspect-[16/9] md:aspect-[21/9] overflow-hidden" id="slider-container">
+                <div id="slidelist" class="flex h-full transition-transform duration-700 ease-in-out">
+                    <?php foreach($images as $image): ?>
+                        <div class="w-full h-full shrink-0 basis-full">
+                            <img class="w-full h-full object-cover" src="<?= htmlspecialchars($image, ENT_QUOTES) ?>" alt="">
+                        </div>
+                    <?php endforeach; ?>
                 </div>
 
-                <div class="khmer mt-16 hidden sm:flex items-center gap-2 text-lg text-white/60">
-                    <i class="bi bi-clock-fill text-amber-300"></i>
-                    <span><?= formatKhmerDate($newsItem['date']) ?></span>
-                </div>
-            </div>
+                <!-- gradients -->
+                <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none"></div>
 
-            <!-- Main News -->
-            <div
-                class="lg:col-span-2 relative z-10 max-sm:mt-[-70px] max-sm:h-screen max-sm:flex max-sm:w-full max-sm:flex-col max-sm:justify-end max-sm:px-4 max-sm:pb-6 max-sm:bg-gradient-to-t max-sm:from-black/95 max-sm:to-transparent">
-                <img src="<?= htmlspecialchars($newsItem['image'][0], ENT_QUOTES) ?>" class="w-full h-[500px] object-cover rounded hidden sm:block"
-                    alt="">
+                <!-- arrow controls -->
+                <button id="prev-slide" class="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm text-white hover:bg-white/40 transition-all duration-200 flex items-center justify-center z-10 opacity-0 group-hover:opacity-100">
+                    <i class="bi bi-chevron-left text-lg"></i>
+                </button>
+                <button id="next-slide" class="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm text-white hover:bg-white/40 transition-all duration-200 flex items-center justify-center z-10 opacity-0 group-hover:opacity-100">
+                    <i class="bi bi-chevron-right text-lg"></i>
+                </button>
 
-                <!-- title -->
-                <h1 class="koulen text-xl sm:text-3xl lg:text-4xl leading-[1.6] mt-5 text-white">
-                    <?= htmlspecialchars($newsItem['title'], ENT_QUOTES) ?>
-                </h1>
-
-                <div class="khmer mt-6 text-sm flex sm:hidden items-center gap-2 text-lg text-white/60">
-                    <i class="bi bi-clock-fill text-amber-300"></i>
-                    <span><?= formatKhmerDate($newsItem['date']) ?></span>
-                </div>
-
-                <div class="khmer flex items-center justify-end text-lg text-white/60">
-
-                    <div class="flex items-center gap-2 hidden sm:flex">
-                        <i class="bi bi-clock-fill text-amber-300"></i>
-                        <span><?= timeAgoKhmer($newsItem['date']) ?></span>
-                    </div>
-                </div>
-                <div class="border-t border-white/80 sm:hidden"></div>
-
-                <p class="khmer text-sm sm:text-lg leading-9 mt-8 text-white/90">
-                    <?= truncate($newsItem['content'], 170); ?>
-                </p>
-
-            </div>
-
-            <!-- content for mobile -->
-            <div class="w-full relative z-10 bg-white p-4 khmer leading-7 sm:hidden border-t border-gray-200">
-
-                <?php foreach($paragraphs as $index => $paragraph): ?>
-
-                    <p class="mb-4 text-gray-800 seimreap-regular">
-                        <?= $paragraph ?>
-                    </p>
-
-                    <?php if(($index + 1) % 2 == 0 && isset($images[$imageIndex])): ?>
-                        <img
-                            src="<?= $images[$imageIndex] ?>"
-                            class="w-full rounded my-4"
-                            alt=""
-                        >
-
-                        <?php $imageIndex++; ?>
-                    <?php endif; ?>
-
-                <?php endforeach; ?>
-                
-                
-                <!-- check if there are still images left to display after the last paragraph -->
-                <?php if (count($images) > $imageIndex): ?>
-                    <?php for ($i = $imageIndex + 1; $i < count($images); $i++): ?>
-                        <img
-                            src="<?= $images[$i] ?>"
-                            class="w-full rounded my-2"
-                            alt=""
-                        >
-                    <?php endfor; ?>
-                <?php endif; ?>
-            </div>
-
-        </div>
-
-        <!-- content -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 sm:gap-6 sm:p-4 md:p-6 hidden sm:grid">
-            <div class="lg:col-span-1"></div>            
-
-            <div class="lg:col-span-2 p-4 khmer leading-7">
-                <?php $imageIndex = 0; ?>
-                <?php foreach($paragraphs as $index => $paragraph): ?>
-
-                    <p class="mb-4 text-gray-800 seimreap-regular">
-                        <?= $paragraph ?>
-                    </p>
-
-                    <?php if(($index + 1) % 2 == 0 && isset($images[$imageIndex])): ?>
-                        <img
-                            src="<?= $images[$imageIndex] ?>"
-                            class="w-full rounded my-4"
-                            alt=""
-                        >
-
-                        <?php $imageIndex++; ?>
-                    <?php endif; ?>
-
-                <?php endforeach; ?>
-                
-                
-                <!-- check if there are still images left to display after the last paragraph -->
-                <?php if (count($images) > $imageIndex): ?>
-                    <?php for ($i = $imageIndex + 1; $i < count($images); $i++): ?>
-                        <img
-                            src="<?= $images[$i] ?>"
-                            class="w-full rounded my-2"
-                            alt=""
-                        >
-                    <?php endfor; ?>
-                <?php endif; ?>
+                <!-- slider dots -->
+                <ul class="absolute bottom-4 left-0 w-full flex justify-center gap-2 z-10">
+                    <?php foreach($images as $i => $image): ?>
+                        <li class="w-2.5 h-2.5 rounded-full bg-white/50 cursor-pointer transition-all duration-300 dot <?= $i === 0 ? 'bg-white w-6' : '' ?>" data-index="<?= $i ?>"></li>
+                    <?php endforeach; ?>
+                </ul>
             </div>
         </div>
+    </div>
 
-        <!-- similar category -->
-        <div class="relative bg-gray-50 z-30">
-            <div class="flex items-center justify-center koulen-regular text-2xl rounded-xl border border-gray-200 bg-white/90 mx-4 px-4 py-3 shadow-sm">
-                    អត្ថបទផ្សេងទៀត
+    <!-- Title & meta -->
+    <div class="w-full max-w-[1024px] mx-auto mt-4 md:mt-6 px-4 md:px-0">
+        <h1 class="text-xl sm:text-2xl md:text-3xl lg:text-4xl koulen-regular text-gray-900 leading-[1.4] md:leading-[1.3]">
+            <?= $newsItem['title'] ?>
+        </h1>
+
+        <div class="flex flex-wrap items-center gap-4 mt-3 pb-4 border-b border-gray-200">
+            <div class="flex items-center gap-2 text-sm text-gray-500">
+                <i class="bi bi-clock-fill text-amber-400"></i>
+                <span><?= formatKhmerDate($newsItem['date']) ?></span>
             </div>
-            
-            <div class="w-full mx-auto container">
-                <div class="grid w-full mx-auto gap-4 p-4 grid-cols-2 lg:grid-cols-4">
-                    <?php
-                    foreach($newsByCategory as $index => $newsItem) {
-                        renderCard($newsItem);
-                    }
-                    ?>
+            <div class="flex items-center gap-2 text-sm text-gray-500">
+                <i class="bi bi-stopwatch text-amber-400"></i>
+                <span><?= timeAgoKhmer($newsItem['date']) ?></span>
+            </div>
+            <div class="flex items-center gap-2 text-sm text-red-700">
+                <i class="bi bi-folder2"></i>
+                <a href="all/<?= $catKey ?? $newsItem['category'] ?>" class="hover:underline"><?= $newsItem['category'] ?></a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Article content -->
+    <div class="w-full max-w-[1024px] mx-auto mt-6 px-4 md:px-0">
+        <div class="md:flex md:gap-8">
+            <!-- Share sidebar (desktop) -->
+            <div class="hidden md:flex flex-col items-center gap-3 pt-2 sticky top-24 self-start">
+                <span class="text-xs text-gray-400 koulen-regular">ចែករំលែក</span>
+                <a href="#"
+                    class="w-10 h-10 rounded-full bg-gray-100 hover:bg-blue-600 hover:text-white flex items-center justify-center text-gray-600 transition-all duration-200">
+                    <i class="bi bi-facebook"></i>
+                </a>
+                <a href="#"
+                    class="w-10 h-10 rounded-full bg-gray-100 hover:bg-sky-500 hover:text-white flex items-center justify-center text-gray-600 transition-all duration-200">
+                    <i class="bi bi-twitter"></i>
+                </a>
+                <a href="#" onclick="navigator.clipboard.writeText(window.location.href);alert('បានចម្លងតំណភ្ជាប់!');return false;"
+                    class="w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-800 hover:text-white flex items-center justify-center text-gray-600 transition-all duration-200">
+                    <i class="bi bi-link-45deg"></i>
+                </a>
+            </div>
+
+            <!-- Body -->
+            <div class="flex-1 min-w-0">
+                <div class="prose prose-gray max-w-none siemreap-regular text-base md:text-lg leading-8 md:leading-9 text-gray-800">
+                    <?php $imageIndex = 0; ?>
+                    <?php foreach($paragraphs as $paraIndex => $paragraph): ?>
+                        <p class="mb-5">
+                            <?= htmlspecialchars($paragraph, ENT_QUOTES) ?>
+                        </p>
+
+                        <?php if(($paraIndex + 1) % 2 == 0 && isset($images[$imageIndex])): ?>
+                            <figure class="my-6">
+                                <img src="<?= $images[$imageIndex] ?>" class="w-full rounded-xl shadow-md" alt="">
+                                <figcaption class="text-sm text-gray-400 mt-2 text-center">រូបភាពពីប្រភព</figcaption>
+                            </figure>
+                            <?php $imageIndex++; ?>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
+
+                    <?php if (count($images) > $imageIndex): ?>
+                        <?php for ($i = $imageIndex + 1; $i < count($images); $i++): ?>
+                            <figure class="my-6">
+                                <img src="<?= $images[$i] ?>" class="w-full rounded-xl shadow-md" alt="">
+                                <figcaption class="text-sm text-gray-400 mt-2 text-center">រូបភាពពីប្រភព</figcaption>
+                            </figure>
+                        <?php endfor; ?>
+                    <?php endif; ?>
                 </div>
+
+                <!-- Share buttons (mobile) -->
+                <div class="flex md:hidden items-center gap-3 mt-6 pt-4 border-t border-gray-200">
+                    <span class="text-sm text-gray-500 koulen-regular">ចែករំលែក៖</span>
+                    <a href="#"
+                        class="w-9 h-9 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center hover:bg-blue-600 hover:text-white transition-all">
+                        <i class="bi bi-facebook"></i>
+                    </a>
+                    <a href="#"
+                        class="w-9 h-9 rounded-full bg-sky-100 text-sky-600 flex items-center justify-center hover:bg-sky-500 hover:text-white transition-all">
+                        <i class="bi bi-twitter"></i>
+                    </a>
+                    <a href="#" onclick="navigator.clipboard.writeText(window.location.href);alert('បានចម្លងតំណភ្ជាប់!');return false;"
+                        class="w-9 h-9 rounded-full bg-gray-100 text-gray-600 flex items-center justify-center hover:bg-gray-800 hover:text-white transition-all">
+                        <i class="bi bi-link-45deg"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Similar articles -->
+    <section class="w-full bg-gray-50 mt-10 py-8 md:py-12">
+        <div class="max-w-[1024px] mx-auto px-4 md:px-0">
+            <div class="flex items-center gap-3 mb-6">
+                <div class="w-10 h-10 bg-red-700 rounded-xl flex items-center justify-center shadow-md">
+                    <i class="bi bi-collection text-white"></i>
+                </div>
+                <h2 class="text-xl md:text-2xl koulen-regular text-gray-900">អត្ថបទផ្សេងទៀត</h2>
+            </div>
+
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+                <?php foreach($newsByCategory as $item): ?>
+                    <?php renderCard($item); ?>
+                <?php endforeach; ?>
             </div>
         </div>
     </section>
-<?php
-}
-?>
+</div>
 
 <script>
 document.addEventListener("DOMContentLoaded", function () {
     const slideList = document.getElementById("slidelist");
     const dots = document.querySelectorAll(".dot");
+    const prevBtn = document.getElementById("prev-slide");
+    const nextBtn = document.getElementById("next-slide");
 
     if (!slideList || dots.length === 0) return;
 
     const totalSlides = dots.length;
     let index = 0;
+    let autoPlay;
 
-    // clone first image
-    const firstSlide = slideList.children[0].cloneNode(true);
-    slideList.appendChild(firstSlide);
+    const firstClone = slideList.children[0].cloneNode(true);
+    slideList.appendChild(firstClone);
 
-    function moveSlide() {
+    function moveTo(i) {
         slideList.style.transition = "transform 0.7s ease-in-out";
-        slideList.style.transform = `translateX(-${index * 100}%)`;
+        slideList.style.transform = `translateX(-${i * 100}%)`;
+        index = i;
+        updateDots();
     }
 
     function updateDots() {
-        dots.forEach(dot => {
-            dot.classList.remove("opacity-100", "w-8");
-            dot.classList.add("opacity-50", "w-4");
+        dots.forEach((dot, i) => {
+            dot.classList.remove("bg-white", "w-6");
+            dot.classList.add("bg-white/50", "w-2.5");
         });
 
-        dots[index % totalSlides].classList.remove("opacity-50", "w-4");
-        dots[index % totalSlides].classList.add("opacity-100", "w-8");
+        const active = index % totalSlides;
+        dots[active].classList.remove("bg-white/50", "w-2.5");
+        dots[active].classList.add("bg-white", "w-6");
     }
 
-    setInterval(() => {
-        index++;
-        moveSlide();
-        updateDots();
+    function nextSlide() {
+        let next = index + 1;
+        moveTo(next);
 
-        if (index === totalSlides) {
+        if (next === totalSlides) {
             setTimeout(() => {
                 slideList.style.transition = "none";
                 index = 0;
                 slideList.style.transform = "translateX(0)";
+                updateDots();
             }, 700);
         }
-    }, 3000);
+    }
 
+    function prevSlide() {
+        if (index === 0) {
+            slideList.style.transition = "none";
+            index = totalSlides;
+            slideList.style.transform = `translateX(-${index * 100}%)`;
+            setTimeout(() => {
+                moveTo(index - 1);
+            }, 50);
+        } else {
+            moveTo(index - 1);
+        }
+    }
+
+    function startAutoPlay() {
+        stopAutoPlay();
+        autoPlay = setInterval(nextSlide, 4000);
+    }
+
+    function stopAutoPlay() {
+        clearInterval(autoPlay);
+    }
+
+    if (prevBtn) prevBtn.addEventListener("click", () => { prevSlide(); startAutoPlay(); });
+    if (nextBtn) nextBtn.addEventListener("click", () => { nextSlide(); startAutoPlay(); });
+
+    dots.forEach(dot => {
+        dot.addEventListener("click", function () {
+            const i = parseInt(this.dataset.index);
+            if (i !== index % totalSlides) {
+                if (i < index % totalSlides && index % totalSlides !== 0) {
+                    moveTo(index - ((index % totalSlides) - i));
+                } else {
+                    moveTo(index + (i - (index % totalSlides)));
+                }
+            }
+            startAutoPlay();
+        });
+    });
+
+    const container = document.getElementById("slider-container");
+    if (container) {
+        container.addEventListener("mouseenter", stopAutoPlay);
+        container.addEventListener("mouseleave", startAutoPlay);
+    }
+
+    startAutoPlay();
     updateDots();
 });
 </script>
+
+<?php
+}
+?>
