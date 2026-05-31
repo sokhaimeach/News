@@ -2,7 +2,7 @@
 function renderFooter(){
 ?>
 
-<footer class="w-full bg-[#1b1b1b] text-white z-50 relative mt-5">
+<footer class="w-full bg-[#1b1b1b] text-white z-30 relative mt-5">
     <!-- main footer content -->
     <div class="max-w-[1024px] mx-auto grid md:grid-cols-3 gap-8 md:gap-12 px-5 py-10 md:py-14">
 

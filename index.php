@@ -49,11 +49,6 @@ $baseHref = $base === '' ? '' : $base;
             font-weight: 400;
             font-style: normal;
         }
-
-        ::selection {
-            background-color: #b91c1c;
-            color: #fff;
-        }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-900 font-[Siemreap,sans-serif]">

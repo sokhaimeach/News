@@ -92,15 +92,15 @@ function renderDetail($id) {
             <!-- Share sidebar (desktop) -->
             <div class="hidden md:flex flex-col items-center gap-3 pt-2 sticky top-24 self-start">
                 <span class="text-xs text-gray-400 koulen-regular">ចែករំលែក</span>
-                <a href="#"
+                <a href=""
                     class="w-10 h-10 rounded-full bg-gray-100 hover:bg-blue-600 hover:text-white flex items-center justify-center text-gray-600 transition-all duration-200">
                     <i class="bi bi-facebook"></i>
                 </a>
-                <a href="#"
+                <a href=""
                     class="w-10 h-10 rounded-full bg-gray-100 hover:bg-sky-500 hover:text-white flex items-center justify-center text-gray-600 transition-all duration-200">
                     <i class="bi bi-twitter"></i>
                 </a>
-                <a href="#" onclick="navigator.clipboard.writeText(window.location.href);alert('បានចម្លងតំណភ្ជាប់!');return false;"
+                <a href="" onclick="navigator.clipboard.writeText(window.location.href);alert('បានចម្លងតំណភ្ជាប់!');return false;"
                     class="w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-800 hover:text-white flex items-center justify-center text-gray-600 transition-all duration-200">
                     <i class="bi bi-link-45deg"></i>
                 </a>

@@ -13,15 +13,15 @@ function renderSearchPage() {
     <div class="max-w-[640px] mx-auto mt-20 mb-8 px-4">
         <h1 class="text-2xl md:text-3xl koulen-regular text-center text-gray-900 mb-6">ស្វែងរកព័ត៌មាន</h1>
         <form action="search" method="GET" class="relative">
-            <div class="flex items-center bg-white rounded-2xl shadow-md border border-gray-200 overflow-hidden focus-within:ring-2 focus-within:ring-red-700/20 focus-within:border-red-300 transition-all duration-200">
+            <div class="flex items-center bg-white rounded-2xl shadow-md border border-red-200 overflow-hidden focus-within:ring-2 focus-within:ring-red-700/20 focus-within:border-red-300 transition-all duration-200">
                 <div class="pl-4 text-gray-400">
                     <i class="bi bi-search text-lg"></i>
                 </div>
-                <input type="text" name="search" value="<?= htmlspecialchars($search, ENT_QUOTES) ?>"
+                <input type="text" class="p-1 h-full w-full border-none px-2" name="search" value="<?= htmlspecialchars($search, ENT_QUOTES) ?>"
                     placeholder="ស្វែងរកព័ត៌មាន..." 
                     class="w-full px-3 py-3.5 text-gray-900 outline-none border-none bg-transparent siemreap-regular">
                 <button type="submit"
-                    class="bg-red-700 hover:bg-red-800 transition-all duration-200 text-white px-5 py-3.5 koulen-regular text-sm">
+                    class="bg-red-700 h-full hover:bg-red-800 transition-all duration-200 text-white px-5 py-3.5 koulen-regular text-sm">
                     ស្វែងរក
                 </button>
             </div>
@@ -38,13 +38,7 @@ function renderSearchPage() {
 
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
                 <?php foreach($newsItems as $index => $item): ?>
-                    <?php if ($index < 2): ?>
-                        <div class="col-span-2">
-                            <?php renderCard($item); ?>
-                        </div>
-                    <?php else: ?>
-                        <?php renderCard($item); ?>
-                    <?php endif; ?>
+                    <?php renderCard($item); ?>
                 <?php endforeach; ?>
             </div>
 
